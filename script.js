@@ -103,6 +103,50 @@ const calcDisplayBalance = function (acc) {
 };
 
 
+const calcDisplaySummary = function (acc) {
+  const incomes = acc.movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumIn.textContent = `${incomes}€`;
+
+  const out = acc.movements
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumOut.textContent = `${Math.abs(out)}€`;
+
+  const interest = acc.movements
+    .filter(mov => mov > 0)
+    .map(deposit => (deposit * acc.interestRate) / 100)
+    .filter((int, i, arr) => {
+      // console.log(arr);
+      return int >= 1;
+    })
+    .reduce((acc, int) => acc + int, 0);
+  labelSumInterest.textContent = `${interest}€`;
+};
+
+const createUsernames = function (accs) {
+  accs.forEach(function (acc) {
+    acc.username = acc.owner
+      .toLowerCase()
+      .split(' ')
+      .map(name => name[0])
+      .join('');
+  });
+};
+createUsernames(accounts);
+
+const updateUI = function (acc) {
+  // Display movements
+  displayMovements(acc.movements);
+
+  // Display balance
+  calcDisplayBalance(acc);
+
+  // Display summary
+  calcDisplaySummary(acc);
+};
+
 
 
 
